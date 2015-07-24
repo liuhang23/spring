@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+           
+    <!-- 
+    创建如下bean等于完成了:HelloWorld helloWorld = new HelloWorld()
+     -->
+	<!-- <bean id="helloWorld" class="com.smartlab.spring.service" scope="prototype"/> -->
+	
+	<!-- 创建了一个User对象user,id为1，username为悟空，如果要注入值不使用ref而是使用value -->
+	<bean id="user" class="com.smartlab.spring.model.User">
+		
+	</bean>
+	<!-- id指定bean的唯一标识符,程序通过id属性值来访问该实例 -->
+	<bean id="userDao" class="com.smartlab.spring.dao.UserDao"></bean>
+	
+	<!-- autowire=byName表示会根据name来完成注入，byType表示根据类型注入 ,使用byType注入如果一个类中有两个同类型的对象就会抛出异常
+	所以在开发中一般都是使用byName虽然自动注入可以减少配置，但是通过bean文件无法很好了解整个类的结果，所以不建议使用autowire-->
+	<bean id="userService" class="com.smartlab.spring.service.UserService">
+		<!-- name中的值会在userService对象中调用setXX方法来注入，诸如:name="userDao"
+		在具体注入时会调用setUserDao(IUserDao userDao)来完成注入
+		ref="userDao"表示是配置文件中的bean中所创建的DAO的id -->
+		<property name="userDao" ref="userDao"></property>
+	</bean>
+
+	<!-- 对于UserAction而言，里面的属性的值的状态会根据不同的线程得到不同的值，所以应该使用多例scope="prototype"
+		ref="" 找到依赖注入的类
+	 -->
+	<bean id="userAction" class="com.smartlab.spring.action.UserAction" scope="singleton">
+		<property name="userService" ref="userService"/>
+	</bean>
+	
+	<!-- 以下是使用构造函数来注入，不常用，基本都是使用set方法注入 -->
+	<!-- <bean id="userAction" class="org.zttc.itat.spring.action.UserAction" scope="prototype">
+		<constructor-arg ref="userService"/>
+	</bean> -->
+</beans>
